@@ -1,0 +1,39 @@
+name: Test cloc counts files
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run cloc action
+        id: cloc
+        uses: .
+      - name: Assert cloc output contains file count
+        run: |
+          echo "Checking cloc.txt for file count summary..."
+          if [ ! -f cloc.txt ]; then
+            echo "FAIL: cloc.txt was not created"
+            exit 1
+          fi
+          echo "--- cloc.txt contents ---"
+          cat cloc.txt
+          echo "--- end cloc.txt ---"
+          # cloc output includes a line with total SUM or file counts
+          if ! grep -qE "^(SUM|[A-Za-z])" cloc.txt; then
+            echo "FAIL: cloc.txt does not appear to contain valid cloc output"
+            exit 1
+          fi
+          echo "PASS: cloc.txt contains valid cloc output with file counts"
+      - name: Assert cloc counted at least one file
+        run: |
+          echo "Checking that cloc counted at least one file..."
+          # The header line shows total files; extract the number after "files"
+          FILES=$(grep -oE "[0-9]+ (unique )?file" cloc.txt | grep -oE "^[0-9]+" | head -1)
+          echo "Files counted: $FILES"
+          if [ -z "$FILES" ] || [ "$FILES" -lt 1 ]; then
+            echo "FAIL: cloc did not count any files (got: '$FILES')"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: cloc counted $FILES file(s)"
