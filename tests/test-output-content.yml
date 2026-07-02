@@ -1,0 +1,37 @@
+name: Test cloc output content
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run cloc action
+        id: cloc
+        uses: .
+      - name: Assert cloc output has line count data
+        run: |
+          echo "Checking cloc.txt for line count data..."
+          if [ ! -f cloc.txt ]; then
+            echo "FAIL: cloc.txt was not created"
+            exit 1
+          fi
+          # cloc output should have numeric data (files, blank, comment, code counts)
+          if ! grep -qE "[0-9]+" cloc.txt; then
+            echo "FAIL: cloc.txt does not contain numeric data"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: cloc.txt contains numeric line count data"
+          echo "--- cloc.txt contents ---"
+          cat cloc.txt
+      - name: Assert cloc output has header
+        run: |
+          echo "Checking cloc.txt for header..."
+          # cloc output should contain the header with files/blank/comment/code columns
+          if ! grep -qiE "(files|blank|comment|code)" cloc.txt; then
+            echo "FAIL: cloc.txt does not contain expected column headers"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: cloc.txt contains expected column headers"

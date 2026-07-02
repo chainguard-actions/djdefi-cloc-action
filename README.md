@@ -1,17 +1,35 @@
-# djdefi/cloc-action
+# cloc-action
+GitHub Action to Count Lines of Code with https://github.com/AlDanial/cloc
 
-Count Lines of Code with https://github.com/AlDanial/cloc
+## Example workflow:
 
-Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/djdefi/cloc-action](https://github.com/djdefi/cloc-action).
+```yml
+name: Count Lines of Code
 
-## Versions
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| 3 | [`3`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/3) | [`02ad341`](https://github.com/djdefi/cloc-action/commit/02ad3414111436658935facc4671cd1e68aa0c6b) |
-| 4 | [`4`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/4) | [`bddf7e4`](https://github.com/djdefi/cloc-action/commit/bddf7e498e404241f5ba66b3873a9dc980891273) |
-| 6 | [`6`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/6) | [`d4a7e15`](https://github.com/djdefi/cloc-action/commit/d4a7e15e4ff5219692f79ba71685af08955dcfc0) |
-| 7 | [`7`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/7) | [`a0529b3`](https://github.com/djdefi/cloc-action/commit/a0529b3e4543679d21233a9287ee96b1b1a29949) |
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  cloc:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v3
+
+    # Runs djdefi/cloc-action
+    - name: Count Lines of Code (cloc)
+      uses: djdefi/cloc-action@5
+```
 
 ## Privacy
 
