@@ -8,6 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
+| 4 | [`4`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/4) | [`bddf7e4`](https://github.com/djdefi/cloc-action/commit/bddf7e498e404241f5ba66b3873a9dc980891273) |
 | 7 | [`7`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/7) | [`a0529b3`](https://github.com/djdefi/cloc-action/commit/a0529b3e4543679d21233a9287ee96b1b1a29949) |
 
 ## Privacy
