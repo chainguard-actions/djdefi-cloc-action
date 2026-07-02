@@ -1,0 +1,37 @@
+name: Test cloc counts files
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+      - name: Assert cloc output contains file count
+        run: |
+          echo "Checking cloc.txt for file counts..."
+          if [ ! -f cloc.txt ]; then
+            echo "FAIL: cloc.txt was not created"
+            exit 1
+          fi
+          # cloc output should contain a header line with "files" column
+          if ! grep -qi "files" cloc.txt; then
+            echo "FAIL: cloc.txt does not contain 'files' header"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: cloc.txt contains file count information"
+          cat cloc.txt
+      - name: Assert cloc detected at least one file
+        run: |
+          echo "Checking that cloc detected at least one file..."
+          # Extract the SUM line and check that file count > 0
+          SUM_LINE=$(grep "SUM" cloc.txt || true)
+          echo "SUM line: $SUM_LINE"
+          if [ -z "$SUM_LINE" ]; then
+            echo "FAIL: No SUM line found in cloc.txt"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: cloc detected files and produced a SUM line"

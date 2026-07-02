@@ -1,0 +1,28 @@
+name: Test basic cloc usage
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: action
+        uses: .
+      - name: Assert cloc.txt was created
+        run: |
+          echo "Checking for cloc.txt..."
+          if [ ! -f cloc.txt ]; then
+            echo "FAIL: cloc.txt was not created"
+            exit 1
+          fi
+          echo "PASS: cloc.txt exists"
+          cat cloc.txt
+      - name: Assert cloc.txt contains expected content
+        run: |
+          echo "Checking cloc.txt content..."
+          if ! grep -q "SUM" cloc.txt; then
+            echo "FAIL: cloc.txt does not contain SUM line"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: cloc.txt contains SUM line"
