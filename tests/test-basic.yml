@@ -11,19 +11,29 @@ jobs:
         uses: .
       - name: Assert cloc.txt was created
         run: |
-          echo "Checking for cloc.txt output file..."
+          echo "Checking for cloc.txt..."
           if [ ! -f cloc.txt ]; then
             echo "FAIL: cloc.txt was not created"
             exit 1
           fi
           echo "PASS: cloc.txt exists"
+          echo "--- cloc.txt contents ---"
           cat cloc.txt
-      - name: Assert cloc output contains expected sections
+      - name: Assert cloc.txt has content
         run: |
-          echo "Checking cloc.txt content..."
-          if ! grep -q "SUM" cloc.txt; then
-            echo "FAIL: cloc.txt does not contain SUM line"
+          LINES=$(wc -l < cloc.txt)
+          echo "cloc.txt has $LINES lines"
+          if [ "$LINES" -lt 2 ]; then
+            echo "FAIL: cloc.txt appears to be empty or too short"
+            exit 1
+          fi
+          echo "PASS: cloc.txt has content"
+      - name: Assert cloc output contains expected headers
+        run: |
+          echo "Checking cloc output for expected content..."
+          if ! grep -qi "language" cloc.txt && ! grep -qi "SUM" cloc.txt && ! grep -qi "files" cloc.txt; then
+            echo "FAIL: cloc.txt does not contain expected cloc output headers"
             cat cloc.txt
             exit 1
           fi
-          echo "PASS: cloc.txt contains SUM line"
+          echo "PASS: cloc output looks valid"

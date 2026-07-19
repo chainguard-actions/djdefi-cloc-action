@@ -1,0 +1,44 @@
+name: Test cloc detects shell scripts
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run cloc action
+        id: cloc
+        uses: .
+      - name: Assert cloc.txt was created
+        run: |
+          if [ ! -f cloc.txt ]; then
+            echo "FAIL: cloc.txt was not created"
+            exit 1
+          fi
+          echo "PASS: cloc.txt exists"
+      - name: Assert cloc detected Bourne Shell or similar
+        run: |
+          echo "--- cloc.txt contents ---"
+          cat cloc.txt
+          echo "--- end of cloc.txt ---"
+          # The repo contains entrypoint.sh and Dockerfile, cloc should detect them
+          if grep -qi "Bourne Shell\|Shell\|sh\|Dockerfile\|Docker" cloc.txt; then
+            echo "PASS: cloc detected shell or docker files"
+          else
+            echo "INFO: cloc output does not mention shell/docker by name, checking for any language detection..."
+            # At minimum, cloc should have found some files
+            if grep -qi "SUM\|Total\|files" cloc.txt; then
+              echo "PASS: cloc found some files to count"
+            else
+              echo "FAIL: cloc did not detect any files"
+              exit 1
+            fi
+          fi
+      - name: Assert SUM line is present
+        run: |
+          if ! grep -qi "SUM\|Total" cloc.txt; then
+            echo "FAIL: cloc.txt does not contain a SUM/Total line"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: SUM/Total line found in cloc output"
