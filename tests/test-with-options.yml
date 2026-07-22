@@ -1,4 +1,4 @@
-name: Test cloc with additional options
+name: Test cloc with options (--json output)
 on:
   workflow_dispatch:
 jobs:
@@ -6,12 +6,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - name: Run cloc with --by-file option
-        id: cloc
+        with:
+          fetch-depth: 0
+
+      - name: Set up git origin reachable inside the Docker container
+        run: |
+          git config user.email "test@example.com"
+          git config user.name "Test User"
+          rm -rf "$GITHUB_WORKSPACE/.git-remote"
+          git init --bare "$GITHUB_WORKSPACE/.git-remote"
+          git push "$GITHUB_WORKSPACE/.git-remote" HEAD:refs/heads/act-harness
+          git push "$GITHUB_WORKSPACE/.git-remote" --tags
+          git remote set-url origin "$GITHUB_WORKSPACE/.git-remote" 2>/dev/null || \
+            git remote add origin "$GITHUB_WORKSPACE/.git-remote"
+
+      - id: cloc
         uses: .
         with:
-          options: '--by-file'
-      - name: Assert cloc ran successfully with options
+          options: '--json'
+
+      - name: Assert cloc output file was created
         run: |
-          echo "cloc with --by-file option completed successfully"
-          echo "PASS"
+          if [ ! -f cloc.txt ]; then
+            echo "FAIL: cloc.txt was not created"
+            exit 1
+          fi
+          echo "PASS: cloc.txt exists"
+          cat cloc.txt
+
+      - name: Assert cloc JSON output is valid JSON
+        run: |
+          if ! cat cloc.txt | python3 -c "import sys, json; json.load(sys.stdin)" 2>/dev/null; then
+            echo "FAIL: cloc.txt is not valid JSON"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: cloc.txt contains valid JSON"
+
+      - name: Assert JSON output contains header key
+        run: |
+          if ! grep -q '"header"' cloc.txt; then
+            echo "FAIL: JSON output missing 'header' key"
+            cat cloc.txt
+            exit 1
+          fi
+          echo "PASS: JSON output contains 'header' key"

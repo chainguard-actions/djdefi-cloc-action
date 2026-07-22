@@ -1,4 +1,4 @@
-name: Test basic cloc usage (no options)
+name: Test cloc with --include-lang option
 on:
   workflow_dispatch:
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - id: cloc
         uses: .
         with:
-          options: ''
+          options: '--include-lang=Bourne Shell'
 
       - name: Assert cloc output file was created
         run: |
@@ -34,11 +34,12 @@ jobs:
           echo "PASS: cloc.txt exists"
           cat cloc.txt
 
-      - name: Assert cloc output contains expected sections
+      - name: Assert cloc ran successfully and produced output
         run: |
-          if ! grep -qi "language" cloc.txt; then
-            echo "FAIL: cloc.txt does not contain 'language' header"
-            cat cloc.txt
+          # cloc should produce some output (even if no matching files, it shows a header or zero-count)
+          if [ ! -s cloc.txt ]; then
+            echo "FAIL: cloc.txt is empty"
             exit 1
           fi
-          echo "PASS: cloc.txt contains expected output"
+          echo "PASS: cloc.txt has content"
+          cat cloc.txt
