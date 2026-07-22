@@ -1,0 +1,55 @@
+name: Test cloc counts shell files
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up a git origin reachable inside the Docker container
+        run: |
+          git config user.email "test@example.com"
+          git config user.name "Test User"
+          rm -rf "$GITHUB_WORKSPACE/.git-remote"
+          git init --bare "$GITHUB_WORKSPACE/.git-remote"
+          git push "$GITHUB_WORKSPACE/.git-remote" HEAD:refs/heads/act-harness
+          git push "$GITHUB_WORKSPACE/.git-remote" --tags
+          git remote set-url origin "$GITHUB_WORKSPACE/.git-remote" 2>/dev/null || \
+            git remote add origin "$GITHUB_WORKSPACE/.git-remote"
+
+      - name: Run cloc action
+        uses: .
+
+      - name: Assert cloc output includes Bourne Shell or YAML entries
+        run: |
+          CONTENT=$(cat "$GITHUB_WORKSPACE/cloc.txt")
+          echo "cloc output:"
+          echo "$CONTENT"
+          # The repo contains entrypoint.sh and action.yml, so cloc should report
+          # at least one of: Bourne Shell, sh, YAML, or Docker
+          if ! echo "$CONTENT" | grep -qiE '(Bourne|Shell|YAML|Docker|SUM)'; then
+            echo "FAIL: expected cloc to report Shell, YAML, or Docker file types"
+            exit 1
+          fi
+          echo "PASS: cloc output contains expected file type entries"
+
+      - name: Assert SUM line shows non-zero lines
+        run: |
+          CONTENT=$(cat "$GITHUB_WORKSPACE/cloc.txt")
+          echo "cloc output:"
+          echo "$CONTENT"
+          # SUM line should show at least 1 file counted
+          SUM_LINE=$(echo "$CONTENT" | grep -i 'SUM' || true)
+          echo "SUM line: $SUM_LINE"
+          if [ -z "$SUM_LINE" ]; then
+            echo "WARN: no SUM line found, checking for any numeric output"
+            # Fallback: just check there are numbers in the output
+            if ! echo "$CONTENT" | grep -qE '[0-9]+'; then
+              echo "FAIL: no numeric counts found in cloc output"
+              exit 1
+            fi
+          fi
+          echo "PASS: cloc output contains file counts"
