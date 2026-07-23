@@ -1,4 +1,4 @@
-name: Test cloc with additional options
+name: Test cloc with JSON output option
 on:
   workflow_dispatch:
 jobs:
@@ -20,13 +20,13 @@ jobs:
           git remote set-url origin "$GITHUB_WORKSPACE/.git-remote" 2>/dev/null || \
             git remote add origin "$GITHUB_WORKSPACE/.git-remote"
 
-      - name: Run cloc action with --by-file option
+      - name: Run cloc action with --json option
         id: cloc
         uses: .
         with:
-          options: '--by-file'
+          options: '--json'
 
-      - name: Assert cloc ran with by-file option
+      - name: Assert cloc produced JSON output
         run: |
           echo "Checking cloc.txt was created..."
           if [ ! -f cloc.txt ]; then
@@ -35,9 +35,9 @@ jobs:
           fi
           echo "Contents of cloc.txt:"
           cat cloc.txt
-          # --by-file output lists individual files; check for file paths or cloc header
-          if ! grep -qE "(cloc|Language|SUM|files)" cloc.txt 2>/dev/null; then
-            echo "FAIL: cloc.txt does not appear to contain expected cloc output"
+          # JSON output should contain curly braces
+          if ! grep -q "{" cloc.txt 2>/dev/null; then
+            echo "FAIL: cloc.txt does not appear to contain JSON output (no '{' found)"
             exit 1
           fi
-          echo "PASS: cloc ran successfully with --by-file option"
+          echo "PASS: cloc ran successfully with --json option and produced JSON output"
