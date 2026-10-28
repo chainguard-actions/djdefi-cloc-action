@@ -6,13 +6,13 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 ## Versions
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| 3 | [`3`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/3) | [`02ad341`](https://github.com/djdefi/cloc-action/commit/02ad3414111436658935facc4671cd1e68aa0c6b) |
-| 4 | [`4`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/4) | [`bddf7e4`](https://github.com/djdefi/cloc-action/commit/bddf7e498e404241f5ba66b3873a9dc980891273) |
-| 5 | [`5`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/5) | [`6b0244f`](https://github.com/djdefi/cloc-action/commit/6b0244f60427a34a43794f3723267f8add465b04) |
-| 6 | [`6`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/6) | [`d4a7e15`](https://github.com/djdefi/cloc-action/commit/d4a7e15e4ff5219692f79ba71685af08955dcfc0) |
-| 7 | [`7`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/7) | [`a0529b3`](https://github.com/djdefi/cloc-action/commit/a0529b3e4543679d21233a9287ee96b1b1a29949) |
+| Version | Tag | Upstream commit | Hardening report |
+|---------|-----|-----------------|------------------|
+| 3 | [`3`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/3) | [`02ad341`](https://github.com/djdefi/cloc-action/commit/02ad3414111436658935facc4671cd1e68aa0c6b) | [`HARDENING.md`](https://github.com/chainguard-actions/djdefi-cloc-action/blob/3/HARDENING.md) |
+| 4 | [`4`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/4) | [`bddf7e4`](https://github.com/djdefi/cloc-action/commit/bddf7e498e404241f5ba66b3873a9dc980891273) | [`HARDENING.md`](https://github.com/chainguard-actions/djdefi-cloc-action/blob/4/HARDENING.md) |
+| 5 | [`5`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/5) | [`6b0244f`](https://github.com/djdefi/cloc-action/commit/6b0244f60427a34a43794f3723267f8add465b04) | [`HARDENING.md`](https://github.com/chainguard-actions/djdefi-cloc-action/blob/5/HARDENING.md) |
+| 6 | [`6`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/6) | [`d4a7e15`](https://github.com/djdefi/cloc-action/commit/d4a7e15e4ff5219692f79ba71685af08955dcfc0) | [`HARDENING.md`](https://github.com/chainguard-actions/djdefi-cloc-action/blob/6/HARDENING.md) |
+| 7 | [`7`](https://github.com/chainguard-actions/djdefi-cloc-action/tree/7) | [`a0529b3`](https://github.com/djdefi/cloc-action/commit/a0529b3e4543679d21233a9287ee96b1b1a29949) | [`HARDENING.md`](https://github.com/chainguard-actions/djdefi-cloc-action/blob/7/HARDENING.md) |
 
 ## Privacy
 
