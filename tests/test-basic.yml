@@ -1,0 +1,33 @@
+name: Test basic usage (no options)
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Remove any stale cloc.txt
+        run: rm -f "$GITHUB_WORKSPACE/cloc.txt"
+      - id: action
+        uses: .
+      - name: Assert cloc.txt produced with a language table
+        run: |
+          f="$GITHUB_WORKSPACE/cloc.txt"
+          if [ ! -f "$f" ]; then
+            echo "FAIL: cloc.txt not created"
+            exit 1
+          fi
+          cat "$f"
+          if ! grep -q "Language" "$f"; then
+            echo "FAIL: expected 'Language' header in cloc output"
+            exit 1
+          fi
+          if ! grep -q "code" "$f"; then
+            echo "FAIL: expected 'code' column in cloc output"
+            exit 1
+          fi
+          if ! grep -qE "^(Dockerfile|Bourne Shell|YAML|Markdown)" "$f"; then
+            echo "FAIL: expected a known language row"
+            exit 1
+          fi
+          echo "PASS"

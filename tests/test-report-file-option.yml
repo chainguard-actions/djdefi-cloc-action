@@ -1,0 +1,28 @@
+name: Test --report-file option
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Remove stale outputs
+        run: rm -f "$GITHUB_WORKSPACE/cloc.txt" "$GITHUB_WORKSPACE/cloc-report.txt"
+      - id: action
+        uses: .
+        with:
+          options: --report-file=cloc-report.txt
+      - name: Assert report file written
+        run: |
+          f="$GITHUB_WORKSPACE/cloc-report.txt"
+          if [ ! -f "$f" ]; then
+            echo "FAIL: cloc-report.txt not created"
+            ls -la "$GITHUB_WORKSPACE"
+            exit 1
+          fi
+          cat "$f"
+          if ! grep -q "Language" "$f"; then
+            echo "FAIL: expected 'Language' header in report file"
+            exit 1
+          fi
+          echo "PASS"
